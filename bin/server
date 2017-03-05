@@ -1,0 +1,10 @@
+#!/bin/dash
+
+exec docker run \
+   -e 'ACCEPT_EULA=Y' \
+   -e 'SA_PASSWORD=password1!' \
+   --name mssql \
+   --rm \
+   microsoft/mssql-server-linux
+
+# vim: ft=sh

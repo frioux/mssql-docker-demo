@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Data::Dumper;
+use DBI;
+use Getopt::Long;
+
+my $show_output;
+
+GetOptions(
+   'show-output' => \$show_output,
+);
+
+my $dbh = DBI->connect(
+   'dbi:ODBC:driver=ODBC Driver 13 for SQL Server;' .
+   "server=tcp:$ENV{MSSQL_PORT_1433_TCP_ADDR};" .
+   'database=msdb;' .
+   'MARS_Connection=yes;',
+   'sa',
+   $ENV{MSSQL_ENV_SA_PASSWORD},
+);
+
+my $sql = shift;
+
+if ($show_output) {
+   print Dumper($dbh->selectall_arrayref($sql, undef, @ARGV))
+} else {
+   $dbh->do($sql, undef, @ARGV)
+}

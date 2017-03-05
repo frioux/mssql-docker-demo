@@ -1,0 +1,26 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils apt-transport-https wget && \
+    sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/mssql-ubuntu-xenial-release/ xenial main" > /etc/apt/sources.list.d/mssqlpreview.list' && \
+    apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893 && \
+    apt-get -y update && \
+    env ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    cpanminus \
+    msodbcsql \
+    unixodbc-dev-utf16 \
+    build-essential && \
+    apt-get install unixodbc-dev-utf16 && \
+    cd /root && \
+    wget https://cpan.metacpan.org/authors/id/M/MJ/MJEVANS/DBD-ODBC-1.56.tar.gz && \
+    tar xf DBD-ODBC-1.56.tar.gz && \
+    cd /root/DBD-ODBC-1.56      && \
+    perl Makefile.PL -u         && \
+    cpanm --installdeps .       && \
+    make                        && \
+    make test                   && \
+    make install                && \
+    rm -rf /root/DBD-ODBC-1.56.tar.gz /root/DBD-ODBC-1.56 && \
+    cd / && \
+    locale-gen en_US en_US.UTF-8
+
+ADD ./bin/psqlcli /usr/local/bin/psqlcli

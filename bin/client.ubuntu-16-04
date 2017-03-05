@@ -1,0 +1,10 @@
+#!/bin/dash
+
+exec docker run \
+   -it \
+   --rm \
+   --link mssql \
+   mssql-client \
+   /usr/local/bin/psqlcli "$@"
+
+# vim: ft=sh
